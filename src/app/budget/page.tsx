@@ -1,5 +1,6 @@
 "use client";
 
+import "chart.js/auto";
 import React, { useState, useEffect } from "react";
 import { Doughnut, Bar } from "react-chartjs-2";
 import { Card, CardHeader, Badge, Button, Input, Select, Modal, EmptyState, StatCard } from "@/components/ui";
@@ -63,9 +64,9 @@ export default function BudgetPage() {
   const handleSave = async () => {
     if (!form.amount) return;
     if (editId) {
-      await fetch(`/api/budget/expenses/${editId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      await fetch(`/api/budget/expenses/${editId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, spentAt: form.date ? new Date(`${form.date}T12:00:00`).toISOString() : undefined }) });
     } else {
-      await fetch("/api/budget/expenses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      await fetch("/api/budget/expenses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, spentAt: form.date ? new Date(`${form.date}T12:00:00`).toISOString() : undefined }) });
     }
     setModalOpen(false);
     setEditId(null);
