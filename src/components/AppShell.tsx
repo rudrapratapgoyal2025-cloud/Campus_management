@@ -22,6 +22,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    if (pathname === "/login" || pathname === "/register") {
+      setLoading(false);
+      return;
+    }
     fetch("/api/auth/me")
       .then((r) => (r.ok ? r.json() : { user: null }))
       .then((data) => {
@@ -33,7 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       })
       .catch(() => router.replace("/login"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [pathname, router]);
 
   if (loading) {
     return (
@@ -41,6 +45,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="animate-pulse text-slate-400">Loading CampusSathi…</div>
       </div>
     );
+  }
+  
+  if (pathname === "/login" || pathname === "/register") {
+    return <>{children}</>;
   }
 
   if (!user) return null;
